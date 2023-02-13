@@ -1,8 +1,8 @@
 ﻿using CSF;
 using CSF.TShock;
+using Foundations.Api;
 using Foundations.Models;
 using Microsoft.Xna.Framework;
-using System.Security.Cryptography.X509Certificates;
 using Terraria;
 using Terraria.Localization;
 using TShockAPI;
@@ -14,7 +14,7 @@ namespace Foundations.Commands
     {
         [Command("foundations")]
         public IResult PluginInfo()
-        {   
+        {
             return Respond("This server is running Foundations version " + Foundations.GetVersion().ToString(), Color.LightGreen);
         }
 
@@ -29,6 +29,27 @@ namespace Foundations.Commands
             temp.stack = temp.maxStack - item.stack;
             Context.Player.GiveItem(temp.type, temp.stack, temp.prefix);
             return Success($"You have been given {temp.stack} more!");
+        }
+
+        [Command("journeyunlock", "ju", "jmunlock")]
+        [RequirePermission("unlock")]
+        public IResult Unlock()
+        {
+            if (!Context.Player.ContainsData(FoundationsApi.setter))
+                for (short i = 0; i <= FoundationsApi.researchCount; i++)
+                {
+                    var packet = new Auxiliary.Packets.PacketFactory()
+                        .SetType((byte)PacketTypes.LoadNetModule)
+                        .PackUInt16(5)
+                        .PackInt16(i)
+                        .PackInt16(999)
+                        .GetByteData();
+
+                    Context.Player.SetData(FoundationsApi.setter, true);
+                    Context.Player.SendRawData(packet);
+                }
+
+            return Success("Researched all items!");
         }
 
         [Command("pvp")]
@@ -60,7 +81,7 @@ namespace Foundations.Commands
         {
             List<StaffMember> staff = new List<StaffMember>();
 
-            foreach(TSPlayer player in TShock.Players)
+            foreach (TSPlayer player in TShock.Players)
             {
                 if (player.HasPermission("foundations.staff"))
                 {
@@ -70,9 +91,9 @@ namespace Foundations.Commands
 
             Info("Staff members online");
 
-            foreach(StaffMember s in staff)
+            foreach (StaffMember s in staff)
             {
-                Respond(s.Player.Group.Prefix + " " + s.Player.Name, s.Player.Group.ChatColor);            
+                Respond(s.Player.Group.Prefix + " " + s.Player.Name, s.Player.Group.ChatColor);
             }
             return ExecuteResult.FromSuccess();
         }

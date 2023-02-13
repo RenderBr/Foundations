@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Terraria;
+using TShockAPI;
 
 namespace Foundations.Commands
 {
@@ -80,16 +81,16 @@ namespace Foundations.Commands
                 {
                     x.Name = name;
                     x.AccountName = Context.Player.Account.Name;
-                    x.X = (int)(Context.Player.X / 16);
-                    x.Y = (int)(Context.Player.Y / 16);
+                    x.X = (int)(Context.Player.X * 16);
+                    x.Y = (int)(Context.Player.Y * 16);
                     x.WorldId = Main.worldID;
                 }));
 
             }
             else
             {
-                home.X = (int)(Context.Player.X / 16);
-                home.Y = (int)(Context.Player.Y / 16);
+                home.X = (int)(Context.Player.X * 16);
+                home.Y = (int)(Context.Player.Y * 16);
                 home.WorldId = Main.worldID;
             }
 

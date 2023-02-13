@@ -1,5 +1,6 @@
 ﻿using CSF;
 using CSF.TShock;
+using Terraria.ID;
 using MongoDB.Driver;
 using System.Linq;
 using Terraria;
@@ -10,6 +11,20 @@ namespace Foundations.Commands
     [RequirePermission("foundations.util")]
     public class UtilityCommands : TSModuleBase<TSCommandContext>
     {
+        [Command("under")]
+        [Description("Places a block underneath you")]
+        public IResult Under(string type = "glass")
+        {
+            int id;
+            bool success = TileID.Search.TryGetId(type, out id);
+            if (success == false)
+                return Error("Invalid tile");
+
+            WorldGen.PlaceTile((int)(Context.Player.X / 16), (int)(Context.Player.Y / 16), id, false, false);
+            TSPlayer.All.SendTileSquareCentered((int)(Context.Player.X / 16), (int)(Context.Player.Y / 16), 5);
+            return Success($"Placed {TileID.Search.GetName(id)} underneath you");
+        }
+
         [Command("find")]
         [Description("FILL THIS OUT LATER")]
         public async Task<IResult> FindCmd(string type = "", string search = "", int page = 1)

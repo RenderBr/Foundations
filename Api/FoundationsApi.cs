@@ -1,5 +1,6 @@
 ﻿using Auxiliary;
 using Foundations.Models;
+using SteelSeries.GameSense;
 using System.Timers;
 using Terraria;
 using Terraria.ID;
@@ -8,6 +9,9 @@ namespace Foundations.Api
 {
     public class FoundationsApi
     {
+        public const string setter = "ResearchUnlocked";
+        public const ushort researchCount = 5453;
+
         public TimeFreeze timeFreeze = new TimeFreeze();
 
         public FoundationsApi()
@@ -18,8 +22,16 @@ namespace Foundations.Api
                 item.SetDefaults(i);
                 Items.Add(item);
             }
-
         }
+
+        public TimeFreeze FreezeTimeInfo()
+            => timeFreeze;
+
+        public void StartFreezeTime(TimeFreeze.TimeOfDay time = TimeFreeze.TimeOfDay.Custom)
+           => Foundations.core.timeFreeze.Start(time);
+
+        public void StopFreezeTime()
+           => Foundations.core.timeFreeze.Stop();
 
         public async Task<PlayerHome> GetHome(string homeName, string accountName, int worldId)
         {

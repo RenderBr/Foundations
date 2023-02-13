@@ -3,7 +3,6 @@ using CSF.TShock;
 using Terraria;
 using TerrariaApi.Server;
 using Foundations.Api;
-using TShock.Hooks;
 using TShockAPI.Hooks;
 using TShockAPI;
 
@@ -57,6 +56,8 @@ namespace Foundations
         private void OnPlayerCommand(PlayerCommandEventArgs e)
         {
             TSPlayer player = e.Player;
+            if (e.CommandText == "=")
+                return;
 
             player.SetData<string>("last", e.CommandText);
         }

@@ -13,7 +13,7 @@ namespace Foundations.Commands
 
         [Command("sudo")]
         [RequirePermission("sudo")]
-        public IResult SudoCmd(string player = "", string cmd = "")
+        public IResult SudoCmd(string player = "", [Remainder] string cmd = "")
         {
             if(player == "")
                 return Error("You must specify a player!");
@@ -55,7 +55,14 @@ namespace Foundations.Commands
             }
         }
 
-        [Command("freezetime")]
+        [Command("send", "rawbc")]
+        [RequirePermission("rawbc")]
+        public IResult RawBroadcast([Remainder] string message)
+        {
+            return Announce(message, Color.White);
+        }
+
+        [Command("freezetime", "ft")]
         [RequirePermission("freezetime")]
         public IResult FreezeTime(string time = "")
         {
