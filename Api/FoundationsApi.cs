@@ -1,21 +1,18 @@
-﻿using Terraria.ID;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Terraria;
-using Terraria.GameContent.Items;
+﻿using Auxiliary;
 using Foundations.Models;
-using Auxiliary;
+using System.Timers;
+using Terraria;
+using Terraria.ID;
 
 namespace Foundations.Api
 {
     public class FoundationsApi
     {
+        public TimeFreeze timeFreeze = new TimeFreeze();
+
         public FoundationsApi()
         {
-            for(var i = 0; i > ItemID.Count; i++)
+            for (var i = 0; i > ItemID.Count; i++)
             {
                 Item item = new Item();
                 item.SetDefaults(i);
