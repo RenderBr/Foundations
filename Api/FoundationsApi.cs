@@ -118,6 +118,16 @@ namespace Foundations.Api
 			return entity;
 		}
 
+		public List<PlayerHome> GetAllHomes(string accountName, int worldId) => StorageProvider.GetMongoCollection<PlayerHome>("PlayerHomes").Find(x => x.AccountName == accountName && x.WorldId == worldId).ToList();
+
+		public async Task<bool> HomeExists(string homeName, string accountName, int worldId)
+		{
+			var entity = await IModel.GetAsync(GetRequest.Bson<PlayerHome>(x => x.AccountName == accountName && x.Name == homeName && x.WorldId == worldId));
+			return entity != null;
+		}
+
+		public void DeleteHome(string homeName, string accountName, int worldId) => StorageProvider.GetMongoCollection<PlayerHome>("PlayerHomes").FindOneAndDelete(GetRequest.Bson<PlayerHome>(x => x.AccountName == accountName && x.Name == homeName && x.WorldId == worldId));
+
 		public List<Item> Items = new List<Item>();
 
 	}

@@ -149,5 +149,40 @@ namespace Foundations.Commands
 			return Success("Your home has been set!");
 		}
 
+		[Command("homes")]
+		[Description("Displays a list of all your homes.")]
+		public IResult ListHomes()
+		{
+			var list = Foundations.core.GetAllHomes(Context.Player.Account.Name, Main.worldID);
+			if (list.Count <= 0)
+				return Error("You don't have any homes!");
+
+			var msg = "You currently own the following homes: ";
+			foreach (PlayerHome home in list)
+			{
+				msg += home.Name + ", ";
+			}
+
+			msg = msg.TrimEnd(',', ' '); // Remove the trailing comma and space
+
+			return Success(msg);
+		}
+
+		[Command("delhome")]
+		[Description("Deletes a home.")]
+		public async Task<IResult> DeleteHome(string args)
+		{
+			if (!String.IsNullOrEmpty(args))
+			{
+				if (await Foundations.core.HomeExists(args, Context.Player.Account.Name, Main.worldID))
+				{
+					Foundations.core.DeleteHome(args, Context.Player.Account.Name, Main.worldID);
+					return Success($"You deleted {args} successfully!");
+				}
+				else return Error($"{args} does not exist!");
+			}
+			else return Error("Please enter a valid home name! Use /homes to see your homes.");
+		}
+
 	}
 }
