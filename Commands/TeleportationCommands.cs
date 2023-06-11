@@ -13,6 +13,7 @@ namespace Foundations.Commands
 	{
 		[Command("tpa")]
 		[Description("Requests to teleport to a player")]
+		[RequirePermission("request")]
 		public IResult TpaCmd([Remainder] string args)
 		{
 			if (string.IsNullOrEmpty(args))
@@ -41,11 +42,11 @@ namespace Foundations.Commands
 				return Error("That player already has a pending request!");
 
 			Foundations.core.RequestTeleport(Context.Player, target);
-			return Success("You have sent a teleport request to {0}.", target.Name);
+			return Success("You have sent a teleport request to {0}. Use /tpd to cancel the request.", target.Name);
 		}
 
 		[Command("tpd")]
-		[Description("Denies a teleport request")]
+		[Description("Denies or cancels a teleport request")]
 		public IResult DenyTp()
 		{
 			Foundations.core.DenyRequest(Context.Player);
@@ -99,6 +100,21 @@ namespace Foundations.Commands
 			{
 				return Error("You cannot teleport to your home at this time!");
 			}
+		}
+
+		[Command("back")]
+		[RequirePermission("back")]
+		public IResult Back()
+		{
+			if (Foundations.core.CanGoBack(Context.Player))
+			{
+				var last = Foundations.core.GetBack(Context.Player);
+				if (last is null)
+					return Error("You can't go back!");
+				Context.Player.Teleport(last.X, last.Y);
+				return Success("You've gone back.");
+			}
+			else return Error("You can't go back!");
 		}
 
 		[Command("sethome")]

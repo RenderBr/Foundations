@@ -24,6 +24,15 @@ namespace Foundations.Commands
 			return Success($"Placed {TileID.Search.GetName(id)} underneath you");
 		}
 
+		[Command("rain", "stoprain", "togglerain")]
+		[Description("Toggles rain")]
+		[RequirePermission("rain")]
+		public IResult Rain()
+		{
+			Main.raining = !Main.raining;
+			return Success(Main.raining ? "It's now raining!" : "It's no longer raining!");
+		}
+
 		//wip, boring & tedious, will do later
 		[Command("find")]
 		[Description("FILL THIS OUT LATER")]

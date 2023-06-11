@@ -42,7 +42,7 @@ namespace Foundations.Commands
 
 
 		//shortcut for do last command
-		[Command("=", "pre")]
+		[Command("=", "pre", "last")]
 		public IResult Pre()
 		{
 			string LastCommand = Context.Player.GetData<string>("last");

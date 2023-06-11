@@ -1,6 +1,7 @@
 ﻿using Auxiliary;
 using Foundations.Models;
 using Microsoft.Xna.Framework;
+using MongoDB.Driver;
 using Terraria;
 using Terraria.ID;
 using TShockAPI;
@@ -27,7 +28,7 @@ namespace Foundations.Api
 
 		public bool RequestTeleport(TSPlayer requester, TSPlayer target)
 		{
-			if (tpRequests.Any(x => x.Requester == requester.Name || x.Target == target.Name))
+			if (tpRequests.Any(x => x.Requester.Name == requester.Name || x.Target.Name == target.Name))
 			{
 				return false;
 			}
@@ -41,10 +42,30 @@ namespace Foundations.Api
 			});
 			target.SendMessage($"{requester.Account.Name} has requested to teleport to you!", Color.LightYellow);
 			target.SendMessage("Type /tpa to accept the request.", Color.LightYellow);
-			target.SendMessage("Type /tp to deny the request.", Color.Red);
+			target.SendMessage("Type /tpd to deny the request.", Color.Red);
 			return true;
 		}
 
+		public void HasTeleported(TSPlayer player)
+		{
+			TrackedLocation loc = new()
+			{
+				AccountName = player.Account.Name,
+				X = player.X,
+				Y = player.Y,
+				Time = DateTime.Now
+			};
+		}
+
+		public bool CanGoBack(TSPlayer player) => StorageProvider.GetMongoCollection<TrackedLocation>("TrackedLocations").Find(x => x.Reverted == false).Any();
+
+		public TrackedLocation? GetBack(TSPlayer player)
+		{
+			var e = StorageProvider.GetMongoCollection<TrackedLocation>("TrackedLocations").FindOneAndDelete(x => x.AccountName == player.Account.Name && x.Reverted == false);
+			e.Reverted = true;
+			return e;
+		}
+		
 		public bool HasRequest(TSPlayer player) => tpRequests.Any(x => x.Target.Name == player.Name || x.Requester.Name == player.Name);
 
 		public void DenyRequest(TSPlayer executor)

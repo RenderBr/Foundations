@@ -27,7 +27,7 @@ namespace Foundations.Commands
 
 		[Command("kickall")]
 		[RequirePermission("kickall")]
-		public IResult KickAll(string reason = "Kicked by staff", string staff = "")
+		public IResult KickAll(string staff = "", [Remainder] string reason = "Kicked by administration.")
 		{
 			switch (staff)
 			{
@@ -35,9 +35,8 @@ namespace Foundations.Commands
 					foreach (TSPlayer plr in TShock.Players)
 					{
 						if (plr != null)
-						{
 							plr.Kick(reason, true, false);
-						}
+
 					}
 					return Success("You kicked everyone!");
 				case "staff":
@@ -66,6 +65,18 @@ namespace Foundations.Commands
 				}
 			}
 			return ExecuteResult.FromSuccess();
+		}
+
+		[Command("killall")]
+		public IResult KillAll()
+		{
+			foreach (TSPlayer p in TShock.Players)
+			{
+				if (p.Name == Context.Player.Name)
+					continue;
+				p.KillPlayer();
+			}
+			return Success("You killed everyone. They do something to piss you off?");
 		}
 
 		[Command("send", "rawbc")]

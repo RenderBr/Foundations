@@ -48,6 +48,7 @@ namespace Foundations
 			await _fx.BuildModulesAsync(typeof(Foundations).Assembly);
 
 			TShockAPI.Hooks.PlayerHooks.PlayerCommand += OnPlayerCommand;
+			GetDataHandlers.Teleport += OnPlayerTeleport;
 		}
 
 		private void OnPlayerCommand(PlayerCommandEventArgs e)
@@ -57,6 +58,15 @@ namespace Foundations
 				return;
 
 			player.SetData<string>("last", e.CommandText);
+		}
+
+		private void OnPlayerTeleport(object sender, GetDataHandlers.TeleportEventArgs e)
+		{
+			TSPlayer player = e.Player;
+			if (player == null)
+				return;
+
+			core.HasTeleported(player);
 		}
 	}
 }
