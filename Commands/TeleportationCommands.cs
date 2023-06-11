@@ -1,6 +1,7 @@
 ﻿using Auxiliary;
 using CSF;
 using CSF.TShock;
+using Foundations.Extensions;
 using Foundations.Models;
 using MongoDB.Driver;
 using Terraria;
@@ -167,6 +168,164 @@ namespace Foundations.Commands
 
 			return Success(msg);
 		}
+
+		[Command("down")]
+		[Description("Teleports the user down x levels")]
+		[RequirePermission("direct")]
+		public async Task<IResult> Down(int levels = 1)
+		{
+			TSPlayer player = Context.Player;
+			int currentLevel = 0;
+			bool empty = false;
+			int x = Math.Max(0, Math.Min(player.TileX, Main.maxTilesX - 2));
+			int y = Math.Max(0, Math.Min(player.TileY + 3, Main.maxTilesY - 3));
+
+			await Task.Run(() =>
+			{
+				for (int j = y; currentLevel < levels && j < Main.maxTilesY - 2; j++)
+				{
+					if (Main.tile[x, j].IsEmpty() && Main.tile[x + 1, j].IsEmpty() &&
+						Main.tile[x, j + 1].IsEmpty() && Main.tile[x + 1, j + 1].IsEmpty() &&
+						Main.tile[x, j + 2].IsEmpty() && Main.tile[x + 1, j + 2].IsEmpty())
+					{
+						empty = true;
+					}
+					else if (empty)
+					{
+						empty = false;
+						currentLevel++;
+						y = j;
+					}
+				}
+			});
+
+			if (currentLevel == 0)
+				return Error("Could not teleport down!");
+			else
+			{
+				player.Teleport(16 * x, 16 * y - 10);
+				return Success("Teleported down {0} level{1}.", currentLevel, currentLevel == 1 ? "" : "s");
+			}
+		}
+
+		[Command("left")]
+		[Description("Teleports the user left x times")]
+		[RequirePermission("direct")]
+		public async Task<IResult> Left(int times = 1)
+		{
+			TSPlayer player = Context.Player;
+			int currentTimes = 0;
+			bool empty = false;
+			int x = Math.Max(0, Math.Min(player.TileX - 3, Main.maxTilesX - 3));
+			int y = Math.Max(0, Math.Min(player.TileY, Main.maxTilesY - 2));
+
+			await Task.Run(() =>
+			{
+				for (int i = x; currentTimes < times && i >= 0; i--)
+				{
+					if (Main.tile[i, y].IsEmpty() && Main.tile[i, y + 1].IsEmpty() &&
+						Main.tile[i + 1, y].IsEmpty() && Main.tile[i + 1, y + 1].IsEmpty() &&
+						Main.tile[i + 2, y].IsEmpty() && Main.tile[i + 2, y + 1].IsEmpty())
+					{
+						empty = true;
+					}
+					else if (empty)
+					{
+						empty = false;
+						currentTimes++;
+						x = i;
+					}
+				}
+			});
+
+			if (currentTimes == 0)
+				return Error("Could not teleport left!");
+			else
+			{
+				player.Teleport(16 * x - 10, 16 * y);
+				return Success("Teleported left {0} time{1}.", currentTimes, currentTimes == 1 ? "" : "s");
+			}
+		}
+
+		[Command("up")]
+		[Description("Teleports the user up x levels")]
+		[RequirePermission("direct")]
+		public async Task<IResult> Up(int levels = 1)
+		{
+			TSPlayer player = Context.Player;
+			int currentLevel = 0;
+			bool empty = false;
+			int x = Math.Max(0, Math.Min(player.TileX, Main.maxTilesX - 2));
+			int y = Math.Max(0, Math.Min(player.TileY - 3, Main.maxTilesY - 3));
+
+			await Task.Run(() =>
+			{
+				for (int j = y; currentLevel < levels && j >= 0; j--)
+				{
+					if (Main.tile[x, j].IsEmpty() && Main.tile[x + 1, j].IsEmpty() &&
+						Main.tile[x, j + 1].IsEmpty() && Main.tile[x + 1, j + 1].IsEmpty() &&
+						Main.tile[x, j + 2].IsEmpty() && Main.tile[x + 1, j + 2].IsEmpty())
+					{
+						empty = true;
+					}
+					else if (empty)
+					{
+						empty = false;
+						currentLevel++;
+						y = j;
+					}
+				}
+			});
+
+			if (currentLevel == 0)
+				return Error("Could not teleport up!");
+			else
+			{
+				player.Teleport(16 * x, 16 * y + 10);
+				return Success("Teleported up {0} level{1}.", currentLevel, currentLevel == 1 ? "" : "s");
+			}
+		}
+
+		[Command("right")]
+		[Description("Teleports the user right x times")]
+		[RequirePermission("direct")]
+		public async Task<IResult> Right(int times = 1)
+		{
+			TSPlayer player = Context.Player;
+			int currentTimes = 0;
+			bool empty = false;
+			int x = Math.Max(0, Math.Min(player.TileX + 3, Main.maxTilesX - 3));
+			int y = Math.Max(0, Math.Min(player.TileY, Main.maxTilesY - 2));
+
+			await Task.Run(() =>
+			{
+				for (int i = x; currentTimes < times && i < Main.maxTilesX - 2; i++)
+				{
+					if (Main.tile[i, y].IsEmpty() && Main.tile[i, y + 1].IsEmpty() &&
+						Main.tile[i + 1, y].IsEmpty() && Main.tile[i + 1, y + 1].IsEmpty() &&
+						Main.tile[i + 2, y].IsEmpty() && Main.tile[i + 2, y + 1].IsEmpty())
+					{
+						empty = true;
+					}
+					else if (empty)
+					{
+						empty = false;
+						currentTimes++;
+						x = i;
+					}
+				}
+			});
+
+			if (currentTimes == 0)
+				return Error("Could not teleport right!");
+			else
+			{
+				player.Teleport(16 * x + 10, 16 * y);
+				return Success("Teleported right {0} time{1}.", currentTimes, currentTimes == 1 ? "" : "s");
+			}
+		}
+
+
 
 		[Command("delhome")]
 		[Description("Deletes a home.")]
