@@ -11,13 +11,8 @@ namespace Foundations.Commands
 	[RequirePermission("foundations.general")]
 	public class GeneralCommands : TSModuleBase<TSCommandContext>
 	{
-<<<<<<< Updated upstream
 		[Command("foundations", "essentials")] // working
-		public IResult PluginInfo() => Respond("This server is running Foundations version " + Foundations.GetVersion().ToString() + ".", Color.LightGreen);
-=======
-		[Command("foundations", "essentials")]
-		public IResult PluginInfo() => Respond("This server is running Foundations version " + Foundations.core.GetVersion().ToString(), Color.LightGreen);
->>>>>>> Stashed changes
+		public IResult PluginInfo() => Respond("This server is running Foundations version " + Foundations.core.GetVersion().ToString() + ".", Color.LightGreen);
 
 		[Command("more")] // working
         [RequirePermission("more")]
@@ -32,13 +27,8 @@ namespace Foundations.Commands
 			return Success($"You have been given {temp.stack} more {temp.Name}!");
 		}
 
-<<<<<<< Updated upstream
 		[Command("pvp")] // working
         [RequirePermission("pvp")]
-=======
-		[Command("pvp")]
-		[RequirePermission("togglepvp")]
->>>>>>> Stashed changes
 		public IResult PvP()
 		{
 			var e = Context.Player;

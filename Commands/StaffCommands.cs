@@ -1,11 +1,8 @@
 ﻿using CSF;
 using CSF.TShock;
 using Foundations.Api;
-<<<<<<< Updated upstream
 using Terraria;
-=======
 using Foundations.Models;
->>>>>>> Stashed changes
 using Microsoft.Xna.Framework;
 using System.Linq;
 using TShockAPI;

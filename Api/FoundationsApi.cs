@@ -28,12 +28,17 @@ namespace Foundations.Api
 		}
 		public Version GetVersion() => Foundations.version;
 
-		public void ChangePlayerTime(string accName)
+		public async Task ChangePlayerTime(string accName, bool day, int frames, bool enabled = true)
 		{
+			var p = await GetUser(accName);
+            p.PlayerTime.Day = day;
+            p.PlayerTime.Frames = frames;
+            p.PlayerTime.Enabled = enabled;
+        }
 
-		}
+        public async Task<FoundationUser> GetUser(string accName) => await IModel.GetAsync(GetRequest.Bson<FoundationUser>(x => x.Account == accName), x => x.Account = accName);
 
-		public bool RequestTeleport(TSPlayer requester, TSPlayer target)
+        public bool RequestTeleport(TSPlayer requester, TSPlayer target)
 		{
 			if (tpRequests.Any(x => x.Requester.Name == requester.Name || x.Target.Name == target.Name))
 			{

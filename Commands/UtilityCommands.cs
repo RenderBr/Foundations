@@ -39,13 +39,11 @@ namespace Foundations.Commands
 		[Command("ptime", "playertime")]
 		[Description("Sets the time for a client player")]
 		[RequirePermission("ptime")]
-		private void ZAPTime(CommandArgs args)
+		public async Task<IResult> Ptime(string time = "")
 		{
-			PlayerTime temp = new PlayerTime() { Frames = -2, Day = true };
+			PlayerTime temp = (await Foundations.core.GetUser(Context.Player.Account.Name)).PlayerTime;
 
-			if (args.Parameters.Count == 1)
-			{
-				switch (args.Parameters[0].ToLower())
+            switch (time)
 				{
 					case "day":
 						temp.Day = true;
@@ -66,44 +64,20 @@ namespace Foundations.Commands
 					case "off":
 						temp.Day = true;
 						temp.Frames = -1;
+						temp.Enabled = false;
 						break;
 					default:
-						break;
+						return Error("Invalid usage: /ptime <day/noon/night/midnight/off>");
 				}
-			}
-
+			
 			if (temp.Enabled == false)
 			{
-				if (playertime.ContainsKey(args.Player.Index))
-				{
-					playertime.Remove(args.Player.Index);
-					args.Player.SendSuccessMessage("Set your time to server time.");
-					SendData(new SendDataEventArgs() { MsgId = PacketTypes.WorldInfo, Handled = false, remoteClient = -1 });
-					return;
-				}
-				else
-				{
-					args.Player.SendErrorMessage("Your time is already the server time!");
-					return;
-				}
+					return Success("Set your time to server time.");
 			}
 
-			if (temp.frames == -2)
-			{
-				args.Player.SendErrorMessage("Invalid usage: /ptime <day/noon/night/midnight/off>");
-				return;
-			}
 
-			if (playertime.ContainsKey(args.Player.Index))
-				playertime[args.Player.Index] = temp;
-			else
-				playertime.Add(args.Player.Index, temp);
-
-			SendData(new SendDataEventArgs() { MsgId = PacketTypes.WorldInfo, Handled = false, remoteClient = -1 });
-
-			args.Player.SendSuccessMessage("Set your personal time to {0}.", args.Parameters[0]);
+			return Success("Set your personal time to {0}.", time);
 		}
-#endregion
 
 		//wip, boring & tedious, will do later
 		[Command("find")]
