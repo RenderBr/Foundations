@@ -1,5 +1,6 @@
 ﻿using CSF;
 using CSF.TShock;
+using Foundations.Models;
 using MongoDB.Driver;
 using Terraria;
 using Terraria.ID;
@@ -33,6 +34,76 @@ namespace Foundations.Commands
 			Main.raining = !Main.raining;
 			return Success(Main.raining ? "It's now raining!" : "It's no longer raining!");
 		}
+
+
+		[Command("ptime", "playertime")]
+		[Description("Sets the time for a client player")]
+		[RequirePermission("ptime")]
+		private void ZAPTime(CommandArgs args)
+		{
+			PlayerTime temp = new PlayerTime() { Frames = -2, Day = true };
+
+			if (args.Parameters.Count == 1)
+			{
+				switch (args.Parameters[0].ToLower())
+				{
+					case "day":
+						temp.Day = true;
+						temp.Frames = (int)Time.DAY;
+						break;
+					case "night":
+						temp.Day = false;
+						temp.Frames = (int)Time.NIGHT;
+						break;
+					case "noon":
+						temp.Day = true;
+						temp.Frames = (int)Time.NOON;
+						break;
+					case "midnight":
+						temp.Day = false;
+						temp.Frames = (int)Time.MIDNIGHT;
+						break;
+					case "off":
+						temp.Day = true;
+						temp.Frames = -1;
+						break;
+					default:
+						break;
+				}
+			}
+
+			if (temp.Enabled == false)
+			{
+				if (playertime.ContainsKey(args.Player.Index))
+				{
+					playertime.Remove(args.Player.Index);
+					args.Player.SendSuccessMessage("Set your time to server time.");
+					SendData(new SendDataEventArgs() { MsgId = PacketTypes.WorldInfo, Handled = false, remoteClient = -1 });
+					return;
+				}
+				else
+				{
+					args.Player.SendErrorMessage("Your time is already the server time!");
+					return;
+				}
+			}
+
+			if (temp.frames == -2)
+			{
+				args.Player.SendErrorMessage("Invalid usage: /ptime <day/noon/night/midnight/off>");
+				return;
+			}
+
+			if (playertime.ContainsKey(args.Player.Index))
+				playertime[args.Player.Index] = temp;
+			else
+				playertime.Add(args.Player.Index, temp);
+
+			SendData(new SendDataEventArgs() { MsgId = PacketTypes.WorldInfo, Handled = false, remoteClient = -1 });
+
+			args.Player.SendSuccessMessage("Set your personal time to {0}.", args.Parameters[0]);
+		}
+#endregion
 
 		//wip, boring & tedious, will do later
 		[Command("find")]

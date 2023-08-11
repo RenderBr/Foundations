@@ -5,6 +5,7 @@ using MongoDB.Driver;
 using Terraria;
 using Terraria.ID;
 using TShockAPI;
+using TShockAPI.DB;
 
 namespace Foundations.Api
 {
@@ -24,6 +25,12 @@ namespace Foundations.Api
 				item.SetDefaults(i);
 				Items.Add(item);
 			}
+		}
+		public Version GetVersion() => Foundations.version;
+
+		public void ChangePlayerTime(string accName)
+		{
+
 		}
 
 		public bool RequestTeleport(TSPlayer requester, TSPlayer target)

@@ -48,6 +48,7 @@ namespace Foundations.Commands
 
 		[Command("tpd")]
 		[Description("Denies or cancels a teleport request")]
+		[RequirePermission("request")]
 		public IResult DenyTp()
 		{
 			Foundations.core.DenyRequest(Context.Player);
@@ -119,7 +120,7 @@ namespace Foundations.Commands
 		}
 
 		[Command("sethome")]
-		[RequirePermission("home")]
+		[RequirePermission("sethome")]
 		public async Task<IResult> SetHomeCmd(string name = "")
 		{
 			if (String.IsNullOrWhiteSpace(name))
@@ -329,6 +330,7 @@ namespace Foundations.Commands
 
 		[Command("delhome")]
 		[Description("Deletes a home.")]
+		[RequirePermission("delhome")]
 		public async Task<IResult> DeleteHome(string args)
 		{
 			if (!String.IsNullOrEmpty(args))

@@ -5,6 +5,7 @@ using Terraria;
 using TerrariaApi.Server;
 using TShockAPI;
 using TShockAPI.Hooks;
+using static TShockAPI.GetDataHandlers;
 
 namespace Foundations
 {
@@ -18,7 +19,7 @@ namespace Foundations
 
 		#region Version logic
 		public static Version version => new Version(1, 0);
-		public override Version Version => new Version();
+		public override Version Version => version;
 		#endregion
 
 		#endregion
@@ -33,22 +34,26 @@ namespace Foundations
 				DoAsynchronousExecution = false
 			});
 		}
-		public static Version GetVersion() => version;
 
 		public async override void Initialize()
 		{
 			core = new FoundationsApi();
 
 			var e = TShockAPI.Commands.ChatCommands.FirstOrDefault(x => x.Name == "home", null);
-			if (e != null)
+			if (e is not null)
 				TShockAPI.Commands.ChatCommands.Remove(e);
 
 
 			// build command modules
 			await _fx.BuildModulesAsync(typeof(Foundations).Assembly);
 
+<<<<<<< Updated upstream
 			PlayerHooks.PlayerCommand += OnPlayerCommand;
 			GetDataHandlers.Teleport += OnPlayerTeleport;
+=======
+			TShockAPI.Hooks.PlayerHooks.PlayerCommand += OnPlayerCommand;
+			Teleport += OnPlayerTeleport;
+>>>>>>> Stashed changes
 		}
 
 		private void OnPlayerCommand(PlayerCommandEventArgs e)
@@ -65,7 +70,7 @@ namespace Foundations
             player.SetData<string>("last", e.CommandText);
 		}
 
-		private void OnPlayerTeleport(object sender, GetDataHandlers.TeleportEventArgs e)
+		private void OnPlayerTeleport(object sender, TeleportEventArgs e)
 		{
 			TSPlayer player = e.Player;
 			if (player == null)

@@ -1,8 +1,13 @@
 ﻿using CSF;
 using CSF.TShock;
 using Foundations.Api;
+<<<<<<< Updated upstream
 using Terraria;
+=======
+using Foundations.Models;
+>>>>>>> Stashed changes
 using Microsoft.Xna.Framework;
+using System.Linq;
 using TShockAPI;
 
 namespace Foundations.Commands
@@ -156,7 +161,7 @@ namespace Foundations.Commands
 		}
 
 		[Command("staffchat", "sc", "s")]
-		[RequirePermission("chat")]
+		[RequirePermission("staffchat")]
 		public IResult StaffChat([Remainder] string message)
 		{
 			foreach (TSPlayer player in TShock.Players)
@@ -170,6 +175,8 @@ namespace Foundations.Commands
 		}
 
 		[Command("killall")]
+		[Description("Kills all players")]
+		[RequirePermission("killall")]
 		public IResult KillAll()
 		{
 			foreach (TSPlayer p in TShock.Players)
@@ -179,6 +186,40 @@ namespace Foundations.Commands
 				p.KillPlayer();
 			}
 			return Success("You killed everyone. They do something to piss you off?");
+		}
+
+		[Command("xid")]
+		[RequirePermission("xid")]
+		public IResult Xid()
+		{
+			var players = TShock.Players.Where(p => p != null);
+			var playerList = players.Select(p => $"({p.Name}, {p.Index})");
+			string playerInfo = string.Join(", ", playerList);
+			return Info("Online players: {0}", playerInfo);
+		}
+
+
+		[Command("baninfo", "binfo")]
+		[Description("Gets information about a ban")]
+		[RequirePermission("baninfo")]
+		public IResult BanInfo(string player)
+		{
+			if (String.IsNullOrEmpty(player))
+				return Error("Invalid syntax: /baninfo \"Player Name\"");
+			else
+			{
+				TShockAPI.DB.Ban bannedplayer = TShock.Bans.Bans.First(x=>x.Value.Identifier.Contains(player)).Value;
+				if (bannedplayer is null)
+					return Error("No bans by this name were found.");
+				else
+				{
+					Info($"Ticket {bannedplayer.TicketNumber} - {bannedplayer.Identifier}");
+					Info("Date banned: " + bannedplayer.BanDateTime);
+					Info("Expiration date: " + bannedplayer.ExpirationDateTime);
+					Info("Banned by: " + bannedplayer.BanningUser);
+					return Info("Reason: " + bannedplayer.Reason);
+				}
+			}
 		}
 
 		[Command("send", "rawbc")]
