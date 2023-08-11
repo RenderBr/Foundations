@@ -57,6 +57,12 @@ namespace Foundations.Api
 			};
 		}
 
+		public void TShockConfigWrite()
+		{
+			var configPath = Path.Combine("tshock", "config.json");
+			TShock.Config.Write(configPath);
+		}
+
 		public bool CanGoBack(TSPlayer player) => StorageProvider.GetMongoCollection<TrackedLocation>("TrackedLocations").Find(x => x.Reverted == false).Any();
 
 		public TrackedLocation? GetBack(TSPlayer player)

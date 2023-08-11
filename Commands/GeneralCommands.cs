@@ -11,11 +11,11 @@ namespace Foundations.Commands
 	[RequirePermission("foundations.general")]
 	public class GeneralCommands : TSModuleBase<TSCommandContext>
 	{
-		[Command("foundations", "essentials")]
-		public IResult PluginInfo() => Respond("This server is running Foundations version " + Foundations.GetVersion().ToString(), Color.LightGreen);
+		[Command("foundations", "essentials")] // working
+		public IResult PluginInfo() => Respond("This server is running Foundations version " + Foundations.GetVersion().ToString() + ".", Color.LightGreen);
 
-		[Command("more")]
-		[RequirePermission("more")]
+		[Command("more")] // working
+        [RequirePermission("more")]
 		public IResult More()
 		{
 			Item item = Context.Player.SelectedItem;
@@ -24,11 +24,11 @@ namespace Foundations.Commands
 			Item temp = Context.Player.SelectedItem;
 			temp.stack = temp.maxStack - item.stack;
 			Context.Player.GiveItem(temp.type, temp.stack, temp.prefix);
-			return Success($"You have been given {temp.stack} more!");
+			return Success($"You have been given {temp.stack} more {temp.Name}!");
 		}
 
-		[Command("pvp")]
-		[RequirePermission("pvp")]
+		[Command("pvp")] // working
+        [RequirePermission("pvp")]
 		public IResult PvP()
 		{
 			var e = Context.Player;
@@ -42,11 +42,11 @@ namespace Foundations.Commands
 
 
 		//shortcut for do last command
-		[Command("=", "pre", "last")]
+		[Command("=", "pre", "last")] // working
 		public IResult Pre()
 		{
 			string LastCommand = Context.Player.GetData<string>("last");
-			TShockAPI.Commands.HandleCommand(Context.Player, LastCommand);
+			TShockAPI.Commands.HandleCommand(Context.Player, TShock.Config.Settings.CommandSpecifier + LastCommand);
 			return Success("You repeated the last command!");
 		}
 
@@ -58,10 +58,11 @@ namespace Foundations.Commands
 
 			foreach (TSPlayer player in TShock.Players)
 			{
+				if(player == null)
+					continue;
+
 				if (player.HasPermission("foundations.staff"))
-				{
 					staff.Add(new StaffMember(player, player.Group));
-				}
 			}
 
 			Info("Staff members online");

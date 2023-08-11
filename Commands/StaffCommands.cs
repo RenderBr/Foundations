@@ -1,6 +1,7 @@
 ﻿using CSF;
 using CSF.TShock;
 using Foundations.Api;
+using Terraria;
 using Microsoft.Xna.Framework;
 using TShockAPI;
 
@@ -25,7 +26,108 @@ namespace Foundations.Commands
 			return Success("You have sudo-ed the user!");
 		}
 
-		[Command("kickall")]
+
+        [Command("config")]
+        [Description("Changes a value in the TShock config")]
+        [RequirePermission("config")]
+		public IResult Config(string opt = "", string val = "")
+		{
+
+
+			switch(opt)
+			{
+				case "maxspawns":
+					{
+						bool parsed = Int32.TryParse(val, out int value);
+						if (val == "" || !parsed)
+							return SendErr(opt, typeof(int));
+
+						NPC.defaultMaxSpawns = value;
+						TShock.Config.Settings.DefaultMaximumSpawns = value;
+						Foundations.core.TShockConfigWrite();
+						return Success($"Changed the default max spawns to {value}.");
+					}
+				case "servername":
+					{
+                        if (val == "")
+                            return SendErr(opt, typeof(string));
+
+						if (TShock.Config.Settings.UseServerName)
+							Main.worldName = val;
+						
+                        TShock.Config.Settings.ServerName = val;
+                        Foundations.core.TShockConfigWrite();
+                        return Success($"Changed the server name to {val}.");
+                    }
+				case "useservername":
+					{
+                        bool parsed = bool.TryParse(val, out bool value);
+                        if (val == "" || !parsed)
+                            return SendErr(opt, typeof(bool));
+
+                        TShock.Config.Settings.UseServerName = value;
+                        Foundations.core.TShockConfigWrite();
+
+                        if (TShock.Config.Settings.UseServerName)
+                            Main.worldName = TShock.Config.Settings.ServerName;
+
+                        return Success($"The server is {(value ? "now using the server name" : "no longer using the server name")}.");
+                    }
+				case "maxslots":
+					{
+                        bool parsed = Int32.TryParse(val, out int value);
+                        if (val == "" || !parsed)
+                            return SendErr(opt, typeof(int));
+
+						Main.maxNetPlayers = value;
+                        TShock.Config.Settings.MaxSlots = value;
+                        Foundations.core.TShockConfigWrite();
+                        return Success($"Changed the max slots to {value}.");
+                    }
+				case "serverpswd":
+				case "servpswd":
+				case "serverpassword":
+					{
+                        if (val == "")
+                            return SendErr(opt, typeof(string));
+
+                        TShock.Config.Settings.ServerPassword = val;
+                        Foundations.core.TShockConfigWrite();
+                        return Success($"Changed the server password to {val}.");
+                    }
+				case "announcesave":
+                    {
+                        bool parsed = bool.TryParse(val, out bool value);
+                        if (val == "" || !parsed)
+                            return SendErr(opt, typeof(bool));
+
+                        TShock.Config.Settings.AnnounceSave = value;
+                        Foundations.core.TShockConfigWrite();
+
+                        return Success($"The server is {(value ? "now announcing world saves " : "no longer announcing world saves")}.");
+                    }
+				case "debuglogs":
+					{
+                        bool parsed = bool.TryParse(val, out bool value);
+                        if (val == "" || !parsed)
+                            return SendErr(opt, typeof(bool));
+
+                        TShock.Config.Settings.DebugLogs = value;
+                        Foundations.core.TShockConfigWrite();
+
+                        return Success($"The server is {(value ? "now debugging logs " : "no longer debugging logs")}.");
+
+                    }
+                default:
+					{
+						return ExecuteResult.FromSuccess();
+					}
+			}
+		}
+
+		IResult SendErr(string confVal, Type valType) => Error($"Please add assign a valid {valType.Name} value to {confVal}");
+
+        [Command("kickall")]
 		[RequirePermission("kickall")]
 		public IResult KickAll(string staff = "", [Remainder] string reason = "Kicked by administration.")
 		{

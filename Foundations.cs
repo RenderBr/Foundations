@@ -47,17 +47,22 @@ namespace Foundations
 			// build command modules
 			await _fx.BuildModulesAsync(typeof(Foundations).Assembly);
 
-			TShockAPI.Hooks.PlayerHooks.PlayerCommand += OnPlayerCommand;
+			PlayerHooks.PlayerCommand += OnPlayerCommand;
 			GetDataHandlers.Teleport += OnPlayerTeleport;
 		}
 
 		private void OnPlayerCommand(PlayerCommandEventArgs e)
 		{
 			TSPlayer player = e.Player;
+#if DEBUG
+			Console.WriteLine($"{e.CommandText}");
+#endif
 			if (e.CommandText == "=")
-				return;
+			{
+                return;
+            }
 
-			player.SetData<string>("last", e.CommandText);
+            player.SetData<string>("last", e.CommandText);
 		}
 
 		private void OnPlayerTeleport(object sender, GetDataHandlers.TeleportEventArgs e)
